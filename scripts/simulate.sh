@@ -3,12 +3,13 @@ set -euo pipefail
 
 # Build and run the Caliptra RTL Verilator smoke test.
 # Run after install_new.sh and setup_new.sh:
-#   ./simulate.sh
-#   ./simulate.sh --trace
-#   ./simulate.sh --test iccm_lock
+#   ./scripts/simulate.sh
+#   ./scripts/simulate.sh --trace
+#   ./scripts/simulate.sh --test iccm_lock
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE="${CALIPTRA_WORKSPACE:-$SCRIPT_DIR}"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+WORKSPACE="${CALIPTRA_WORKSPACE:-$REPO_ROOT/hack_dac}"
 ENV_FILE="$WORKSPACE/caliptra_env.sh"
 TEST="${TESTNAME:-iccm_lock}"
 TRACE=0
@@ -49,7 +50,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ ! -f "$ENV_FILE" ]]; then
-  echo "missing $ENV_FILE; run ./setup_new.sh first" >&2
+  echo "missing $ENV_FILE; run ./scripts/setup_new.sh first" >&2
   exit 1
 fi
 

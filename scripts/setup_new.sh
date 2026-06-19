@@ -3,10 +3,11 @@ set -euo pipefail
 
 # Clone/pin Caliptra RTL and write the workspace environment helper.
 # Run after install_new.sh:
-#   ./setup_new.sh
+#   ./scripts/setup_new.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE="${CALIPTRA_WORKSPACE:-$SCRIPT_DIR}"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+WORKSPACE="${CALIPTRA_WORKSPACE:-$REPO_ROOT/hack_dac}"
 CALIPTRA_REPO="${CALIPTRA_REPO:-https://github.com/chipsalliance/caliptra-rtl}"
 CALIPTRA_REF="${CALIPTRA_REF:-a687e263ab4550b40ab428dee1494a07a9add7d5}"
 CALIPTRA_ROOT="$WORKSPACE/third_party/caliptra-rtl"
@@ -23,13 +24,13 @@ mkdir -p "$WORKSPACE"/{downloads,logs,runs,third_party,tools}
 log "checking required tools"
 for tool in git make riscv64-unknown-elf-gcc; do
   if ! command -v "$tool" >/dev/null 2>&1 && [[ ! -x "$WORKSPACE/tools/riscv/bin/$tool" ]]; then
-    echo "missing required tool: $tool; run ./install_new.sh first" >&2
+    echo "missing required tool: $tool; run ./scripts/install_new.sh first" >&2
     exit 1
   fi
 done
 
 if [[ ! -x "$WORKSPACE/tools/verilator-src-$VERILATOR_VERSION/bin/verilator" ]]; then
-  echo "missing workspace Verilator $VERILATOR_VERSION; run ./install_new.sh first" >&2
+  echo "missing workspace Verilator $VERILATOR_VERSION; run ./scripts/install_new.sh first" >&2
   exit 1
 fi
 
@@ -57,7 +58,7 @@ log "writing $ENV_FILE"
 cat > "$ENV_FILE" <<'ENV_EOF'
 #!/usr/bin/env bash
 # Source this file, do not execute it:
-#   source ./caliptra_env.sh
+#   source hack_dac/caliptra_env.sh
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "This file must be sourced, not executed." >&2

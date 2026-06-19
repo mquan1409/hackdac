@@ -3,10 +3,11 @@ set -euo pipefail
 
 # Fresh Ubuntu 24.04 tool install for the Caliptra RTL Verilator smoke flow.
 # Run first:
-#   ./install_new.sh
+#   ./scripts/install_new.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE="${CALIPTRA_WORKSPACE:-$SCRIPT_DIR}"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+WORKSPACE="${CALIPTRA_WORKSPACE:-$REPO_ROOT/hack_dac}"
 VERILATOR_VERSION="${VERILATOR_VERSION:-v5.044}"
 VERILATOR_SRC="$WORKSPACE/tools/verilator-src-$VERILATOR_VERSION"
 RISCV_ROOT="$WORKSPACE/tools/riscv"

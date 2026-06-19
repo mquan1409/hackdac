@@ -20,8 +20,25 @@ log() {
   printf '\n[%s] %s\n' "$(date -u +%H:%M:%S)" "$*"
 }
 
+prepare_workspace_dirs() {
+  if [[ -L "$WORKSPACE" ]]; then
+    log "removing workspace symlink: $WORKSPACE -> $(readlink "$WORKSPACE")"
+    rm "$WORKSPACE"
+  fi
+
+  mkdir -p "$WORKSPACE"
+  for dir in downloads logs runs third_party tools; do
+    if [[ -L "$WORKSPACE/$dir" ]]; then
+      log "removing workspace subdir symlink: $WORKSPACE/$dir -> $(readlink "$WORKSPACE/$dir")"
+      rm "$WORKSPACE/$dir"
+    fi
+  done
+
+  mkdir -p "$WORKSPACE"/{downloads,logs,runs,third_party,tools}
+}
+
 log "workspace: $WORKSPACE"
-mkdir -p "$WORKSPACE"/{downloads,logs,runs,third_party,tools}
+prepare_workspace_dirs
 
 log "checking required tools"
 for tool in git make riscv64-unknown-elf-gcc; do

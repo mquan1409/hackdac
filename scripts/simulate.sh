@@ -51,6 +51,12 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ -L "$WORKSPACE" ]]; then
+  echo "workspace path is a symlink: $WORKSPACE -> $(readlink "$WORKSPACE")" >&2
+  echo "run ./scripts/install_new.sh to recreate it as a real directory under this repo" >&2
+  exit 1
+fi
+
 if [[ ! -f "$ENV_FILE" ]]; then
   echo "missing $ENV_FILE; run ./scripts/setup_new.sh first" >&2
   exit 1

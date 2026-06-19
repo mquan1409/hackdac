@@ -43,8 +43,25 @@ apt_install() {
   fi
 }
 
+prepare_workspace_dirs() {
+  if [[ -L "$WORKSPACE" ]]; then
+    log "removing workspace symlink: $WORKSPACE -> $(readlink "$WORKSPACE")"
+    rm "$WORKSPACE"
+  fi
+
+  mkdir -p "$WORKSPACE"
+  for dir in downloads logs runs third_party tools; do
+    if [[ -L "$WORKSPACE/$dir" ]]; then
+      log "removing workspace subdir symlink: $WORKSPACE/$dir -> $(readlink "$WORKSPACE/$dir")"
+      rm "$WORKSPACE/$dir"
+    fi
+  done
+
+  mkdir -p "$WORKSPACE"/{downloads,logs,runs,third_party,tools} "$RISCV_ROOT/bin"
+}
+
 log "workspace: $WORKSPACE"
-mkdir -p "$WORKSPACE"/{downloads,logs,runs,third_party,tools} "$RISCV_ROOT/bin"
+prepare_workspace_dirs
 
 require_sudo
 
@@ -101,19 +118,12 @@ mkdir -p "$(dirname "$PICOLIBC_LOCAL_LINK")"
 ln -sfn "$PICOLIBC_SYSTEM_ROOT" "$PICOLIBC_LOCAL_LINK"
 
 log "installing Verilator $VERILATOR_VERSION from source"
-if [[ ! -d "$VERILATOR_SRC/.git" ]]; then
-  rm -rf "$VERILATOR_SRC"
-  git clone --depth 1 --branch "$VERILATOR_VERSION" https://github.com/verilator/verilator "$VERILATOR_SRC"
-else
-  git -C "$VERILATOR_SRC" fetch --depth 1 origin "$VERILATOR_VERSION"
-  git -C "$VERILATOR_SRC" checkout -f "$VERILATOR_VERSION"
-fi
-
-log "cleaning stale Verilator build artifacts"
-git -C "$VERILATOR_SRC" clean -ffdx
+rm -rf "$VERILATOR_SRC"
+git clone --depth 1 --branch "$VERILATOR_VERSION" https://github.com/verilator/verilator "$VERILATOR_SRC"
 
 (
   cd "$VERILATOR_SRC"
+  export CCACHE_DISABLE=1
   autoconf
   CC=clang CXX=clang++ ./configure
   make -C src optimize -j "$JOBS" CC=clang CXX=clang++

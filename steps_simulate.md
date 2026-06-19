@@ -4,13 +4,13 @@ This file documents the README flow for building and running a Caliptra
 top-level Verilator smoke test from this workspace:
 
 ```sh
-/Users/ealche/hackdac/hack_dac_26
+$HOME/hackdac/hack_dac_26
 ```
 
 The environment setup is centralized in:
 
 ```sh
-source /Users/ealche/hackdac/hack_dac_26/caliptra_env.sh [main|v2.1]
+source $HOME/hackdac/hack_dac_26/caliptra_env.sh [main|v2.1]
 ```
 
 Use `main` for the current `third_party/caliptra-rtl` checkout, or `v2.1` for
@@ -21,14 +21,14 @@ the worktree matching the Caliptra 2.1 docs.
 For the current `main` checkout:
 
 ```sh
-cd /Users/ealche/hackdac/hack_dac_26
+cd $HOME/hackdac/hack_dac_26
 source ./caliptra_env.sh main
 ```
 
 For the Caliptra RTL `v2.1` worktree:
 
 ```sh
-cd /Users/ealche/hackdac/hack_dac_26
+cd $HOME/hackdac/hack_dac_26
 source ./caliptra_env.sh v2.1
 ```
 
@@ -174,8 +174,8 @@ and writes per-test logs with pass/fail status.
 The README `program.hex` target is currently passing here:
 
 ```sh
-source /Users/ealche/hackdac/hack_dac_26/caliptra_env.sh main
-RUN_DIR=/Users/ealche/hackdac/hack_dac_26/runs/caliptra_top_programhex_main
+source $HOME/hackdac/hack_dac_26/caliptra_env.sh main
+RUN_DIR=$HOME/hackdac/hack_dac_26/runs/caliptra_top_programhex_main
 mkdir -p "$RUN_DIR"
 make -C "$RUN_DIR" \
   -f "$CALIPTRA_ROOT/tools/scripts/Makefile" \
@@ -219,7 +219,7 @@ logs/diag_host_nodebug_verilator_build.log
 The currently working smoke-test command is:
 
 ```sh
-source /Users/ealche/hackdac/hack_dac_26/caliptra_env.sh main
+source $HOME/hackdac/hack_dac_26/caliptra_env.sh main
 unset CALIPTRA_VERILATOR_DEBUG
 caliptra_smoke_test iccm_lock
 ```
@@ -227,7 +227,7 @@ caliptra_smoke_test iccm_lock
 For a VCD:
 
 ```sh
-source /Users/ealche/hackdac/hack_dac_26/caliptra_env.sh main
+source $HOME/hackdac/hack_dac_26/caliptra_env.sh main
 export CALIPTRA_VERILATOR_DEBUG=--trace
 caliptra_smoke_test iccm_lock
 ```

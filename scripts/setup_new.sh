@@ -7,7 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-WORKSPACE_NAME="hack_dac"
+WORKSPACE_NAME="hack_dac_26"
 WORKSPACE="$REPO_ROOT/$WORKSPACE_NAME"
 export CALIPTRA_WORKSPACE="$WORKSPACE"
 CALIPTRA_REPO="${CALIPTRA_REPO:-https://github.com/chipsalliance/caliptra-rtl}"
@@ -60,7 +60,7 @@ log "writing $ENV_FILE"
 cat > "$ENV_FILE" <<'ENV_EOF'
 #!/usr/bin/env bash
 # Source this file, do not execute it:
-#   source hack_dac/caliptra_env.sh
+#   source hack_dac_26/caliptra_env.sh
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "This file must be sourced, not executed." >&2

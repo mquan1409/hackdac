@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Compatibility shim. The generated Caliptra environment now lives at:
-#   hack_dac/caliptra_env.sh
+#   hack_dac_26/caliptra_env.sh
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "This file must be sourced, not executed." >&2
@@ -9,7 +9,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 fi
 
 _HACKDAC_REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-_HACKDAC_WORKSPACE_NAME="hack_dac"
+_HACKDAC_WORKSPACE_NAME="hack_dac_26"
 _HACKDAC_ENV_FILE="$_HACKDAC_REPO_ROOT/$_HACKDAC_WORKSPACE_NAME/caliptra_env.sh"
 
 if [[ ! -f "$_HACKDAC_ENV_FILE" ]]; then

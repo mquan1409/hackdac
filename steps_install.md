@@ -3,7 +3,7 @@
 Workspace used for all local artifacts:
 
 ```sh
-/home/sethi5/hack_dac_26
+/Users/ealche/hackdac/hack_dac
 ```
 
 I intentionally did not use the Caliptra software emulator flow. This document
@@ -50,7 +50,7 @@ runs/verilator_iccm_lock/verilator_build.log
 ## 1. Create Local Workspace Folders
 
 ```sh
-cd /home/sethi5/hack_dac_26
+cd /Users/ealche/hackdac/hack_dac
 mkdir -p third_party tools/riscv/bin runs logs downloads
 ```
 
@@ -66,7 +66,7 @@ To keep the run commands project-local, I created a local prefix with symlinks
 to the available `riscv64-unknown-elf-*` binaries:
 
 ```sh
-cd /home/sethi5/hack_dac_26
+cd /Users/ealche/hackdac/hack_dac
 for f in /usr/bin/riscv64-unknown-elf-*; do
   ln -sf "$f" "tools/riscv/bin/$(basename "$f")"
 done
@@ -82,7 +82,7 @@ target C headers like `string.h`.
 I downloaded and extracted `picolibc-riscv64-unknown-elf` into this workspace:
 
 ```sh
-cd /home/sethi5/hack_dac_26
+cd /Users/ealche/hackdac/hack_dac
 cd downloads
 apt-get download picolibc-riscv64-unknown-elf
 cd ..
@@ -93,7 +93,7 @@ dpkg-deb -x downloads/picolibc-riscv64-unknown-elf_1.8.6-2_all.deb \
 Paths used later:
 
 ```sh
-PICOLIBC=/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf
+PICOLIBC=/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf
 PICOLIBC_INC=$PICOLIBC/include
 PICOLIBC_LIB=$PICOLIBC/lib/release/rv32imac/ilp32
 ```
@@ -101,7 +101,7 @@ PICOLIBC_LIB=$PICOLIBC/lib/release/rv32imac/ilp32
 ## 4. Clone Caliptra RTL
 
 ```sh
-cd /home/sethi5/hack_dac_26
+cd /Users/ealche/hackdac/hack_dac
 git clone --recursive https://github.com/chipsalliance/caliptra-rtl \
   third_party/caliptra-rtl
 ```
@@ -116,12 +116,12 @@ submodules/adams-bridge: c2f863176bcc773c01a9c2f631536cbcd77a68a0
 ## 5. Environment for Caliptra RTL
 
 ```sh
-export CALIPTRA_WORKSPACE=/home/sethi5/hack_dac_26
-export CALIPTRA_ROOT=/home/sethi5/hack_dac_26/third_party/caliptra-rtl
+export CALIPTRA_WORKSPACE=/Users/ealche/hackdac/hack_dac
+export CALIPTRA_ROOT=/Users/ealche/hackdac/hack_dac/third_party/caliptra-rtl
 export CALIPTRA_PRIM_ROOT=$CALIPTRA_ROOT/src/caliptra_prim_generic
 export CALIPTRA_PRIM_MODULE_PREFIX=caliptra_prim_generic
 export CALIPTRA_AXI4PC_DIR=$CALIPTRA_ROOT/src/integration/tb
-export PATH=/home/sethi5/hack_dac_26/tools/riscv/bin:$PATH
+export PATH=/Users/ealche/hackdac/hack_dac/tools/riscv/bin:$PATH
 export TESTNAME=iccm_lock
 ```
 
@@ -138,18 +138,18 @@ That file is guarded so it only errors for non-Verilator flows.
 Run directory:
 
 ```sh
-cd /home/sethi5/hack_dac_26
+cd /Users/ealche/hackdac/hack_dac
 mkdir -p runs/verilator_iccm_lock
 ```
 
 Firmware build command:
 
 ```sh
-make -C /home/sethi5/hack_dac_26/runs/verilator_iccm_lock \
-  -f /home/sethi5/hack_dac_26/third_party/caliptra-rtl/tools/scripts/Makefile \
+make -C /Users/ealche/hackdac/hack_dac/runs/verilator_iccm_lock \
+  -f /Users/ealche/hackdac/hack_dac/third_party/caliptra-rtl/tools/scripts/Makefile \
   TESTNAME=iccm_lock \
-  BUILD_CFLAGS="-I/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/include" \
-  TEST_LIBS="-nostdlib -L/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release/rv32imac/ilp32 -L/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release -lc -lm -lgcc" \
+  BUILD_CFLAGS="-I/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/include" \
+  TEST_LIBS="-nostdlib -L/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release/rv32imac/ilp32 -L/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release -lc -lm -lgcc" \
   program.hex
 ```
 
@@ -177,11 +177,11 @@ Verilator 5.028 2024-08-21 rev v5.028
 Command:
 
 ```sh
-make -C /home/sethi5/hack_dac_26/runs/verilator_iccm_lock \
-  -f /home/sethi5/hack_dac_26/third_party/caliptra-rtl/tools/scripts/Makefile \
+make -C /Users/ealche/hackdac/hack_dac/runs/verilator_iccm_lock \
+  -f /Users/ealche/hackdac/hack_dac/third_party/caliptra-rtl/tools/scripts/Makefile \
   TESTNAME=iccm_lock \
-  BUILD_CFLAGS="-I/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/include" \
-  TEST_LIBS="-nostdlib -L/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release/rv32imac/ilp32 -L/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release -lc -lm -lgcc" \
+  BUILD_CFLAGS="-I/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/include" \
+  TEST_LIBS="-nostdlib -L/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release/rv32imac/ilp32 -L/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release -lc -lm -lgcc" \
   verilator
 ```
 
@@ -200,7 +200,7 @@ I tried to build it locally.
 Clone:
 
 ```sh
-cd /home/sethi5/hack_dac_26
+cd /Users/ealche/hackdac/hack_dac
 git clone --depth 1 --branch v5.044 https://github.com/verilator/verilator \
   tools/verilator-src-v5.044
 ```
@@ -225,18 +225,18 @@ logs/verilator_5_044_install_clang.log
 Retry environment:
 
 ```sh
-export VERILATOR_ROOT=/home/sethi5/hack_dac_26/tools/verilator-src-v5.044
-export PATH=$VERILATOR_ROOT/bin:/home/sethi5/hack_dac_26/tools/riscv/bin:$PATH
+export VERILATOR_ROOT=/Users/ealche/hackdac/hack_dac/tools/verilator-src-v5.044
+export PATH=$VERILATOR_ROOT/bin:/Users/ealche/hackdac/hack_dac/tools/riscv/bin:$PATH
 ```
 
 Retry command:
 
 ```sh
-make -C /home/sethi5/hack_dac_26/runs/verilator_iccm_lock \
-  -f /home/sethi5/hack_dac_26/third_party/caliptra-rtl/tools/scripts/Makefile \
+make -C /Users/ealche/hackdac/hack_dac/runs/verilator_iccm_lock \
+  -f /Users/ealche/hackdac/hack_dac/third_party/caliptra-rtl/tools/scripts/Makefile \
   TESTNAME=iccm_lock \
-  BUILD_CFLAGS="-I/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/include" \
-  TEST_LIBS="-nostdlib -L/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release/rv32imac/ilp32 -L/home/sethi5/hack_dac_26/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release -lc -lm -lgcc" \
+  BUILD_CFLAGS="-I/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/include" \
+  TEST_LIBS="-nostdlib -L/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release/rv32imac/ilp32 -L/Users/ealche/hackdac/hack_dac/tools/riscv/picolibc/usr/lib/picolibc/riscv64-unknown-elf/lib/release -lc -lm -lgcc" \
   verilator-build
 ```
 
@@ -268,7 +268,7 @@ only target.
 Create a separate worktree:
 
 ```sh
-cd /home/sethi5/hack_dac_26
+cd /Users/ealche/hackdac/hack_dac
 git -C third_party/caliptra-rtl worktree add ../caliptra-rtl-v2.1 v2.1
 git -C third_party/caliptra-rtl-v2.1 submodule update --init --recursive
 ```
@@ -285,7 +285,7 @@ so I used those directly instead of making firmware build part of the requested
 result:
 
 ```sh
-cd /home/sethi5/hack_dac_26
+cd /Users/ealche/hackdac/hack_dac
 mkdir -p runs/verilator_iccm_lock_v2_1
 cp third_party/caliptra-rtl-v2.1/src/integration/test_suites/iccm_lock/iccm_lock.hex \
   runs/verilator_iccm_lock_v2_1/program.hex
@@ -298,14 +298,14 @@ touch runs/verilator_iccm_lock_v2_1/mailbox.hex
 Then I ran only the SoC Verilator build target:
 
 ```sh
-export CALIPTRA_WORKSPACE=/home/sethi5/hack_dac_26
-export CALIPTRA_ROOT=/home/sethi5/hack_dac_26/third_party/caliptra-rtl-v2.1
+export CALIPTRA_WORKSPACE=/Users/ealche/hackdac/hack_dac
+export CALIPTRA_ROOT=/Users/ealche/hackdac/hack_dac/third_party/caliptra-rtl-v2.1
 export CALIPTRA_AXI4PC_DIR=$CALIPTRA_ROOT/src/integration/tb
 export CALIPTRA_PRIM_ROOT=$CALIPTRA_ROOT/src/caliptra_prim_generic
 export CALIPTRA_PRIM_MODULE_PREFIX=caliptra_prim_generic
-export PATH=/home/sethi5/hack_dac_26/tools/riscv/bin:$PATH
+export PATH=/Users/ealche/hackdac/hack_dac/tools/riscv/bin:$PATH
 
-make -C /home/sethi5/hack_dac_26/runs/verilator_iccm_lock_v2_1 \
+make -C /Users/ealche/hackdac/hack_dac/runs/verilator_iccm_lock_v2_1 \
   -f $CALIPTRA_ROOT/tools/scripts/Makefile \
   TESTNAME=iccm_lock \
   verilator-build
@@ -371,13 +371,13 @@ Wrapper path:
 tools/riscv/bin/riscv64-unknown-elf-gcc
 ```
 
-With `PATH=/home/sethi5/hack_dac_26/tools/riscv/bin:$PATH`, the exact README
+With `PATH=/Users/ealche/hackdac/hack_dac/tools/riscv/bin:$PATH`, the exact README
 command now passes for the current `main` checkout:
 
 ```sh
-cd /home/sethi5/hack_dac_26/runs/caliptra_top_programhex_main
-export CALIPTRA_ROOT=/home/sethi5/hack_dac_26/third_party/caliptra-rtl
-export PATH=/home/sethi5/hack_dac_26/tools/riscv/bin:$PATH
+cd /Users/ealche/hackdac/hack_dac/runs/caliptra_top_programhex_main
+export CALIPTRA_ROOT=/Users/ealche/hackdac/hack_dac/third_party/caliptra-rtl
+export PATH=/Users/ealche/hackdac/hack_dac/tools/riscv/bin:$PATH
 make -f ${CALIPTRA_ROOT}/tools/scripts/Makefile TESTNAME=caliptra_top program.hex
 ```
 
@@ -402,9 +402,9 @@ runs/caliptra_top_programhex_main/caliptra_top.exe
 I also verified the same README target against the `v2.1` worktree:
 
 ```sh
-cd /home/sethi5/hack_dac_26/runs/caliptra_top_programhex_v2_1
-export CALIPTRA_ROOT=/home/sethi5/hack_dac_26/third_party/caliptra-rtl-v2.1
-export PATH=/home/sethi5/hack_dac_26/tools/riscv/bin:$PATH
+cd /Users/ealche/hackdac/hack_dac/runs/caliptra_top_programhex_v2_1
+export CALIPTRA_ROOT=/Users/ealche/hackdac/hack_dac/third_party/caliptra-rtl-v2.1
+export PATH=/Users/ealche/hackdac/hack_dac/tools/riscv/bin:$PATH
 make -f ${CALIPTRA_ROOT}/tools/scripts/Makefile TESTNAME=caliptra_top program.hex
 ```
 

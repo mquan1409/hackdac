@@ -7,7 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-WORKSPACE="${CALIPTRA_WORKSPACE:-$REPO_ROOT/hack_dac}"
+WORKSPACE="$REPO_ROOT/hack_dac"
 CALIPTRA_REPO="${CALIPTRA_REPO:-https://github.com/chipsalliance/caliptra-rtl}"
 CALIPTRA_REF="${CALIPTRA_REF:-a687e263ab4550b40ab428dee1494a07a9add7d5}"
 CALIPTRA_ROOT="$WORKSPACE/third_party/caliptra-rtl"

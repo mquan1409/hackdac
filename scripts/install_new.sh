@@ -7,7 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-WORKSPACE="${CALIPTRA_WORKSPACE:-$REPO_ROOT/hack_dac}"
+WORKSPACE="$REPO_ROOT/hack_dac"
 VERILATOR_VERSION="${VERILATOR_VERSION:-v5.044}"
 VERILATOR_SRC="$WORKSPACE/tools/verilator-src-$VERILATOR_VERSION"
 RISCV_ROOT="$WORKSPACE/tools/riscv"

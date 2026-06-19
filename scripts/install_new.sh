@@ -109,6 +109,9 @@ else
   git -C "$VERILATOR_SRC" checkout -f "$VERILATOR_VERSION"
 fi
 
+log "cleaning stale Verilator build artifacts"
+git -C "$VERILATOR_SRC" clean -ffdx
+
 (
   cd "$VERILATOR_SRC"
   autoconf

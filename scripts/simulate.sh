@@ -9,7 +9,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-WORKSPACE="$REPO_ROOT/hack_dac"
+WORKSPACE_NAME="hack_dac"
+WORKSPACE="$REPO_ROOT/$WORKSPACE_NAME"
+export CALIPTRA_WORKSPACE="$WORKSPACE"
 ENV_FILE="$WORKSPACE/caliptra_env.sh"
 TEST="${TESTNAME:-iccm_lock}"
 TRACE=0

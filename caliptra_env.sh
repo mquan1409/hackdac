@@ -9,14 +9,15 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 fi
 
 _HACKDAC_REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-_HACKDAC_ENV_FILE="$_HACKDAC_REPO_ROOT/hack_dac/caliptra_env.sh"
+_HACKDAC_WORKSPACE_NAME="hack_dac"
+_HACKDAC_ENV_FILE="$_HACKDAC_REPO_ROOT/$_HACKDAC_WORKSPACE_NAME/caliptra_env.sh"
 
 if [[ ! -f "$_HACKDAC_ENV_FILE" ]]; then
   echo "missing $_HACKDAC_ENV_FILE; run ./scripts/setup_new.sh first" >&2
-  unset _HACKDAC_REPO_ROOT _HACKDAC_ENV_FILE
+  unset _HACKDAC_REPO_ROOT _HACKDAC_WORKSPACE_NAME _HACKDAC_ENV_FILE
   return 1
 fi
 
 # shellcheck disable=SC1090
 source "$_HACKDAC_ENV_FILE"
-unset _HACKDAC_REPO_ROOT _HACKDAC_ENV_FILE
+unset _HACKDAC_REPO_ROOT _HACKDAC_WORKSPACE_NAME _HACKDAC_ENV_FILE

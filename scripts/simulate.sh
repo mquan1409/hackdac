@@ -15,18 +15,69 @@ export CALIPTRA_WORKSPACE="$WORKSPACE"
 ENV_FILE="$WORKSPACE/caliptra_env.sh"
 TEST="${TESTNAME:-iccm_lock}"
 TRACE=0
+LIST_ONLY=0
+ALLOW_UNLISTED=0
 
 usage() {
   cat <<USAGE
-Usage: $0 [--test TESTNAME] [--trace]
+Usage: $0 [--test TESTNAME] [--trace] [--list] [--allow-unlisted]
 
 Defaults:
   TESTNAME=iccm_lock
 
 Options:
-  --test TESTNAME  Caliptra integration test to run.
-  --trace          Enable VCD tracing with VERILATOR_DEBUG=--trace.
+  --test TESTNAME   Caliptra integration test to run.
+  --trace           Enable VCD tracing with VERILATOR_DEBUG=--trace.
+  --list            List supported tests from Caliptra stimulus YAMLs.
+  --allow-unlisted  Run a TESTNAME even if it is not in stimulus YAMLs.
 USAGE
+}
+
+list_supported_tests() {
+  local stimulus_dir="$WORKSPACE/third_party/caliptra-rtl/src/integration/stimulus"
+
+  if [[ ! -d "$stimulus_dir" ]]; then
+    echo "missing $stimulus_dir; run ./scripts/setup_new.sh first" >&2
+    return 1
+  fi
+
+  python3 - "$stimulus_dir" <<'PY'
+import pathlib
+import re
+import sys
+
+stimulus_dir = pathlib.Path(sys.argv[1])
+tests = set()
+pattern = re.compile(r"test_suites/([^/\s:{]+)/\1(?:\.ya?ml)?")
+
+for path in stimulus_dir.rglob("*.yml"):
+    for match in pattern.finditer(path.read_text(errors="ignore")):
+        tests.add(match.group(1))
+
+for path in stimulus_dir.rglob("*.yaml"):
+    for match in pattern.finditer(path.read_text(errors="ignore")):
+        tests.add(match.group(1))
+
+for test in sorted(tests):
+    print(test)
+PY
+}
+
+validate_testname() {
+  local testname="$1"
+  local supported_tests
+
+  if [[ "$ALLOW_UNLISTED" -eq 1 ]]; then
+    return 0
+  fi
+
+  supported_tests="$(list_supported_tests)"
+  if ! grep -Fxq "$testname" <<<"$supported_tests"; then
+    echo "unsupported test for this simulate.sh flow: $testname" >&2
+    echo "Use ./scripts/simulate.sh --list to see supported tests." >&2
+    echo "Use --allow-unlisted only for experimental upstream test directories." >&2
+    return 1
+  fi
 }
 
 while [[ $# -gt 0 ]]; do
@@ -37,6 +88,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --trace)
       TRACE=1
+      shift
+      ;;
+    --list)
+      LIST_ONLY=1
+      shift
+      ;;
+    --allow-unlisted)
+      ALLOW_UNLISTED=1
       shift
       ;;
     -h|--help)
@@ -57,6 +116,13 @@ if [[ -L "$WORKSPACE" ]]; then
   exit 1
 fi
 
+if [[ "$LIST_ONLY" -eq 1 ]]; then
+  list_supported_tests
+  exit 0
+fi
+
+validate_testname "$TEST"
+
 if [[ ! -f "$ENV_FILE" ]]; then
   echo "missing $ENV_FILE; run ./scripts/setup_new.sh first" >&2
   exit 1
@@ -66,6 +132,7 @@ fi
 source "$ENV_FILE"
 
 export TESTNAME="$TEST"
+
 if [[ "$TRACE" -eq 1 ]]; then
   export CALIPTRA_VERILATOR_DEBUG="--trace"
 else

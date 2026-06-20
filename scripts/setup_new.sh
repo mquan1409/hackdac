@@ -63,6 +63,7 @@ fi
   cd "$CALIPTRA_ROOT"
   git fetch origin
   git checkout -f "$CALIPTRA_REF"
+  git clean -ffdx
   git submodule sync --recursive
   git submodule update --init --recursive
 )

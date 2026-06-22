@@ -47,6 +47,7 @@ import re
 import sys
 
 stimulus_dir = pathlib.Path(sys.argv[1])
+test_suites_dir = stimulus_dir.parent / "test_suites"
 tests = set()
 pattern = re.compile(r"test_suites/([^/\s:{]+)/\1(?:\.ya?ml)?")
 
@@ -58,7 +59,21 @@ for path in stimulus_dir.rglob("*.yaml"):
     for match in pattern.finditer(path.read_text(errors="ignore")):
         tests.add(match.group(1))
 
-for test in sorted(tests):
+def is_direct_wrapper_test(test):
+    test_dir = test_suites_dir / test
+    if not test_dir.is_dir():
+        return False
+
+    direct_files = [
+        test_dir / f"{test}.c",
+        test_dir / f"{test}.S",
+        test_dir / f"{test}.s",
+        test_dir / f"{test}.hex",
+        test_dir / f"{test}.makefile",
+    ]
+    return any(path.exists() for path in direct_files)
+
+for test in sorted(test for test in tests if is_direct_wrapper_test(test)):
     print(test)
 PY
 }

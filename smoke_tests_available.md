@@ -8,9 +8,11 @@ Local Caliptra HEAD:
 a687e263ab4550b40ab428dee1494a07a9add7d5
 ```
 
-This file lists tests referenced by Caliptra integration stimulus YAMLs at the local checkout and backed by a same-name source, hex, executable, or per-test makefile in `src/integration/test_suites`.
+This file is generated from the local checkout by scanning Caliptra integration stimulus YAMLs and applying the same support filter used by `./scripts/simulate.sh --list`.
 
-Run any listed test with:
+A test is listed as supported when it is stimulus-referenced and has a same-name C/assembly source, same-name hex, or per-test makefile. Prebuilt-only ELF tests are excluded because this older Caliptra Makefile can generate invalid `dccm.hex` addresses for them.
+
+Run any supported test with:
 
 ```bash
 ./scripts/simulate.sh --test <TESTNAME>
@@ -22,46 +24,14 @@ The default remains:
 ./scripts/simulate.sh --test iccm_lock
 ```
 
-Count: 151 direct tests (48 non-`smoke_test_*`, 103 `smoke_test_*`).
+Supported count: 117 tests (14 non-`smoke_test_*`, 103 `smoke_test_*`).
 
-## Non-`smoke_test_*` Integration Tests
+Excluded prebuilt-only count: 34.
+
+## Supported Non-`smoke_test_*` Integration Tests
 
 ```text
 c_intr_handler
-fw_test_lms24
-fw_test_lms32
-fw_test_lms_n24_w1_h10
-fw_test_lms_n24_w1_h15
-fw_test_lms_n24_w1_h20
-fw_test_lms_n24_w1_h5
-fw_test_lms_n24_w2_h10
-fw_test_lms_n24_w2_h15
-fw_test_lms_n24_w2_h20
-fw_test_lms_n24_w2_h5
-fw_test_lms_n24_w4_h10
-fw_test_lms_n24_w4_h15
-fw_test_lms_n24_w4_h20
-fw_test_lms_n24_w4_h5
-fw_test_lms_n24_w8_h10
-fw_test_lms_n24_w8_h15
-fw_test_lms_n24_w8_h20
-fw_test_lms_n24_w8_h5
-fw_test_lms_n32_w1_h10
-fw_test_lms_n32_w1_h15
-fw_test_lms_n32_w1_h20
-fw_test_lms_n32_w1_h5
-fw_test_lms_n32_w2_h10
-fw_test_lms_n32_w2_h15
-fw_test_lms_n32_w2_h20
-fw_test_lms_n32_w2_h5
-fw_test_lms_n32_w4_h10
-fw_test_lms_n32_w4_h15
-fw_test_lms_n32_w4_h20
-fw_test_lms_n32_w4_h5
-fw_test_lms_n32_w8_h10
-fw_test_lms_n32_w8_h15
-fw_test_lms_n32_w8_h20
-fw_test_lms_n32_w8_h5
 hello_world_iccm
 iccm_lock
 kv_entry_read_err
@@ -77,7 +47,7 @@ randomized_pcr_ecc_signing
 randomized_pcr_mldsa_signing
 ```
 
-## `smoke_test_*` Integration Tests
+## Supported `smoke_test_*` Integration Tests
 
 ```text
 smoke_test_abr_kv_zero_error
@@ -183,4 +153,45 @@ smoke_test_veer
 smoke_test_wdt
 smoke_test_wdt_rst
 smoke_test_zeroize_crypto
+```
+
+## Excluded Prebuilt-Only ELF Tests
+
+These are referenced by stimulus YAMLs but are not supported by `simulate.sh` in this older pinned commit. Their prebuilt ELF `.data` sections use DCCM VMAs with small LMAs, and the old Makefile transforms LMAs into out-of-range `dccm.hex` addresses for Verilator `$readmem`.
+
+```text
+fw_test_lms24
+fw_test_lms32
+fw_test_lms_n24_w1_h10
+fw_test_lms_n24_w1_h15
+fw_test_lms_n24_w1_h20
+fw_test_lms_n24_w1_h5
+fw_test_lms_n24_w2_h10
+fw_test_lms_n24_w2_h15
+fw_test_lms_n24_w2_h20
+fw_test_lms_n24_w2_h5
+fw_test_lms_n24_w4_h10
+fw_test_lms_n24_w4_h15
+fw_test_lms_n24_w4_h20
+fw_test_lms_n24_w4_h5
+fw_test_lms_n24_w8_h10
+fw_test_lms_n24_w8_h15
+fw_test_lms_n24_w8_h20
+fw_test_lms_n24_w8_h5
+fw_test_lms_n32_w1_h10
+fw_test_lms_n32_w1_h15
+fw_test_lms_n32_w1_h20
+fw_test_lms_n32_w1_h5
+fw_test_lms_n32_w2_h10
+fw_test_lms_n32_w2_h15
+fw_test_lms_n32_w2_h20
+fw_test_lms_n32_w2_h5
+fw_test_lms_n32_w4_h10
+fw_test_lms_n32_w4_h15
+fw_test_lms_n32_w4_h20
+fw_test_lms_n32_w4_h5
+fw_test_lms_n32_w8_h10
+fw_test_lms_n32_w8_h15
+fw_test_lms_n32_w8_h20
+fw_test_lms_n32_w8_h5
 ```

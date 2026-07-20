@@ -12,6 +12,12 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 WORKSPACE_NAME="hack_dac_26"
 WORKSPACE="$REPO_ROOT/$WORKSPACE_NAME"
 export CALIPTRA_WORKSPACE="$WORKSPACE"
+
+# Verilator's precompiled headers embed the absolute run-directory path.  Do
+# not allow ccache to restore a PCH produced for another smoke-test run.
+export OBJCACHE=
+export CCACHE_DISABLE=1
+
 ENV_FILE="$WORKSPACE/caliptra_env.sh"
 TEST="${TESTNAME:-iccm_lock}"
 TRACE=0

@@ -1,2 +1,6 @@
 hack_dac_26/
 logs/
+*.before_compile_error
+backups/
+hackatdac26-phase-2-caliptra/
+hackathon_aes_cwe226_bugs.md

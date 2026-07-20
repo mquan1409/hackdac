@@ -10,10 +10,11 @@ RUNS_ROOT="$REPO_ROOT/hack_dac_26/runs"
 SIMULATE="$SCRIPT_DIR/simulate_container.sh"
 REQUESTED_JOBS=""
 REUSE_RUNS=0
+SELECTED_TESTS=""
 
 usage() {
   cat <<'USAGE'
-Usage: ./scripts/run_all_smoke_tests_parallel.sh [--jobs N] [--reuse-runs]
+Usage: ./scripts/run_all_smoke_tests_parallel.sh [--jobs N] [--reuse-runs] [--tests TEST1,TEST2,...]
 
 Run only the passing, regression-approved smoke_test_* targets listed in the
 "Passing Smoke Tests — Approved For Use" section of smoke_tests_available.md.
@@ -24,6 +25,7 @@ Options:
   --jobs N      Number of concurrent test workers. Default: min(available CPUs, 4).
   --reuse-runs  Keep existing generated test directories. Default: remove each
                 test's own verilator_<test>_main directory before rebuilding.
+  --tests LIST  Comma-separated subset of the approved passing smoke tests.
   -h, --help    Show this help text.
 USAGE
 }
@@ -37,6 +39,10 @@ while [[ $# -gt 0 ]]; do
     --reuse-runs)
       REUSE_RUNS=1
       shift
+      ;;
+    --tests)
+      SELECTED_TESTS="${2:?missing value for --tests}"
+      shift 2
       ;;
     -h|--help)
       usage
@@ -77,6 +83,22 @@ mapfile -t TESTS < <(
 if (( ${#TESTS[@]} == 0 )); then
   echo "no regression-approved passing smoke_test_* entries found in $TEST_LIST" >&2
   exit 1
+fi
+if [[ -n "$SELECTED_TESTS" ]]; then
+  declare -A APPROVED_TESTS=()
+  for test_name in "${TESTS[@]}"; do
+    APPROVED_TESTS["$test_name"]=1
+  done
+
+  IFS=',' read -r -a REQUESTED_TESTS <<< "$SELECTED_TESTS"
+  TESTS=()
+  for test_name in "${REQUESTED_TESTS[@]}"; do
+    if [[ -z "$test_name" || -z "${APPROVED_TESTS[$test_name]+present}" ]]; then
+      echo "--tests contains a missing or non-approved test: $test_name" >&2
+      exit 2
+    fi
+    TESTS+=("$test_name")
+  done
 fi
 
 mapfile -t AVAILABLE_CPUS < <(python3 - <<'PY'

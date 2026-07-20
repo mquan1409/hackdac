@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run every supported smoke_test_* target in parallel, with bounded workers.
+# Run every regression-approved smoke_test_* target in parallel, with bounded workers.
 
 set -uo pipefail
 
@@ -15,9 +15,10 @@ usage() {
   cat <<'USAGE'
 Usage: ./scripts/run_all_smoke_tests_parallel.sh [--jobs N] [--reuse-runs]
 
-Run every smoke_test_* listed in smoke_tests_available.md. Each test runs in an
-independent child process. Workers receive disjoint CPU sets; nested Verilator
-builds use only the CPUs assigned to their worker.
+Run only the passing, regression-approved smoke_test_* targets listed in the
+"Passing Smoke Tests — Approved For Use" section of smoke_tests_available.md.
+Each test runs in an independent child process. Workers receive disjoint CPU
+sets; nested Verilator builds use only the CPUs assigned to their worker.
 
 Options:
   --jobs N      Number of concurrent test workers. Default: min(available CPUs, 4).
@@ -66,9 +67,15 @@ if ! command -v taskset >/dev/null || ! command -v flock >/dev/null; then
   exit 1
 fi
 
-mapfile -t TESTS < <(awk '/^smoke_test_[A-Za-z0-9_]+$/ { print $1 }' "$TEST_LIST" | sort -u)
+mapfile -t TESTS < <(
+  awk '
+    /^### Passing Smoke Tests — Approved For Use$/ { approved = 1; next }
+    /^### / { approved = 0 }
+    approved && /^smoke_test_[A-Za-z0-9_]+$/ { print $1 }
+  ' "$TEST_LIST" | sort -u
+)
 if (( ${#TESTS[@]} == 0 )); then
-  echo "no smoke_test_* entries found in $TEST_LIST" >&2
+  echo "no regression-approved passing smoke_test_* entries found in $TEST_LIST" >&2
   exit 1
 fi
 

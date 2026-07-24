@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Clone/pin Caliptra RTL and write the workspace environment helper.
-# Run after install_new.sh:
+# Pin a user-provided Caliptra RTL checkout and write the workspace environment
+# helper. Run after install_new.sh and cloning Caliptra RTL to:
+#   hack_dac_26/third_party/caliptra-rtl
 #   ./scripts/setup_new.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -53,12 +54,18 @@ if [[ ! -x "$WORKSPACE/tools/verilator-src-$VERILATOR_VERSION/bin/verilator" ]];
   exit 1
 fi
 
-log "cloning/updating Caliptra RTL"
+log "checking user-provided Caliptra RTL checkout"
 if [[ ! -d "$CALIPTRA_ROOT/.git" ]]; then
-  rm -rf "$CALIPTRA_ROOT"
+  cat >&2 <<EOF
+missing Caliptra RTL checkout: $CALIPTRA_ROOT
+
+Clone it before running this script:
   git clone --recursive "$CALIPTRA_REPO" "$CALIPTRA_ROOT"
+EOF
+  exit 1
 fi
 
+log "pinning Caliptra RTL"
 (
   cd "$CALIPTRA_ROOT"
   git fetch origin

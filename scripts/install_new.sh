@@ -39,7 +39,7 @@ apt_install() {
   if [[ "$(id -u)" -eq 0 ]]; then
     DEBIAN_FRONTEND=noninteractive apt-get "$@"
   else
-    sudo DEBIAN_FRONTEND=noninteractive apt-get "$@"
+    sudo env DEBIAN_FRONTEND=noninteractive apt-get "$@"
   fi
 }
 

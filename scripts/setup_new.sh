@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Pin a user-provided Caliptra RTL checkout and write the workspace environment
+# Use a user-provided Caliptra RTL checkout and write the workspace environment
 # helper. Run after install_new.sh and cloning Caliptra RTL to:
 #   hack_dac_26/third_party/caliptra-rtl
 #   ./scripts/setup_new.sh
@@ -11,8 +11,6 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 WORKSPACE_NAME="hack_dac_26"
 WORKSPACE="$REPO_ROOT/$WORKSPACE_NAME"
 export CALIPTRA_WORKSPACE="$WORKSPACE"
-CALIPTRA_REPO="${CALIPTRA_REPO:-https://github.com/chipsalliance/caliptra-rtl}"
-CALIPTRA_REF="${CALIPTRA_REF:-a687e263ab4550b40ab428dee1494a07a9add7d5}"
 CALIPTRA_ROOT="$WORKSPACE/third_party/caliptra-rtl"
 VERILATOR_VERSION="${VERILATOR_VERSION:-v5.044}"
 ENV_FILE="$WORKSPACE/caliptra_env.sh"
@@ -42,7 +40,7 @@ log "workspace: $WORKSPACE"
 prepare_workspace_dirs
 
 log "checking required tools"
-for tool in git make riscv64-unknown-elf-gcc; do
+for tool in make riscv64-unknown-elf-gcc; do
   if ! command -v "$tool" >/dev/null 2>&1 && [[ ! -x "$WORKSPACE/tools/riscv/bin/$tool" ]]; then
     echo "missing required tool: $tool; run ./scripts/install_new.sh first" >&2
     exit 1
@@ -55,29 +53,13 @@ if [[ ! -x "$WORKSPACE/tools/verilator-src-$VERILATOR_VERSION/bin/verilator" ]];
 fi
 
 log "checking user-provided Caliptra RTL checkout"
-if [[ ! -d "$CALIPTRA_ROOT/.git" ]]; then
+if [[ ! -d "$CALIPTRA_ROOT" ]]; then
   cat >&2 <<EOF
 missing Caliptra RTL checkout: $CALIPTRA_ROOT
 
 Clone it before running this script:
-  git clone --recursive "$CALIPTRA_REPO" "$CALIPTRA_ROOT"
+  git clone --recursive https://github.com/chipsalliance/caliptra-rtl "$CALIPTRA_ROOT"
 EOF
-  exit 1
-fi
-
-log "pinning Caliptra RTL"
-(
-  cd "$CALIPTRA_ROOT"
-  git fetch origin
-  git checkout -f "$CALIPTRA_REF"
-  git clean -ffdx
-  git submodule sync --recursive
-  git submodule update --init --recursive
-)
-
-ACTUAL_REF="$(git -C "$CALIPTRA_ROOT" rev-parse HEAD)"
-if [[ "$ACTUAL_REF" != "$CALIPTRA_REF" ]]; then
-  echo "Caliptra checkout mismatch: expected $CALIPTRA_REF, got $ACTUAL_REF" >&2
   exit 1
 fi
 
